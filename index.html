@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>InferOps - Kubernetes-native inference</title>
+    <meta
+      name="description"
+      content="InferOps deploys OpenAI-compatible inference runtimes into your own Kubernetes cluster with SDK, CLI, and YAML workflows."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <svg class="svg-filters" aria-hidden="true" focusable="false">
+      <filter id="sketch-map" x="-6%" y="-6%" width="112%" height="112%">
+        <feTurbulence
+          type="fractalNoise"
+          baseFrequency="0.012 0.038"
+          numOctaves="2"
+          seed="12"
+          result="paper-noise"
+        />
+        <feDisplacementMap
+          in="SourceGraphic"
+          in2="paper-noise"
+          scale="2.2"
+          xChannelSelector="R"
+          yChannelSelector="G"
+        />
+      </filter>
+    </svg>
+    <div class="site-shell">
+      <header class="topbar">
+        <a class="brand" href="#" aria-label="InferOps home">
+          <span class="brand-mark"></span>
+          inferops
+        </a>
+        <nav class="nav-links" aria-label="Primary navigation">
+          <a href="#entrypoints">Entrypoints</a>
+          <a href="#provisioning">Provisioning</a>
+          <a href="#network">Network</a>
+          <a href="#articles">Articles</a>
+        </nav>
+        <a class="nav-cta" href="#entrypoints">Get started</a>
+      </header>
+
+      <main>
+        <section class="hero" aria-labelledby="hero-title">
+          <div class="hero-copy">
+            <h1 id="hero-title">
+              <span>Inference</span>
+              <span>made easier.</span>
+            </h1>
+            <p class="hero-lede">
+              Kickstart an OpenAI-compatible inference server on your own
+              Kubernetes cluster and connect to it from wherever you build.
+            </p>
+            <div class="hero-actions">
+              <a class="primary-button" href="#entrypoints">Start deploying</a>
+              <a class="secondary-button" href="#provisioning">View runtime flow</a>
+            </div>
+          </div>
+          <div class="hero-visual" aria-label="Homelab cluster rendering">
+            <img
+              src="assets/homelab-cluster.png"
+              alt="A GPU workstation rack for a homelab inference cluster"
+            />
+          </div>
+        </section>
+
+        <section class="entrypoints section-band" id="entrypoints">
+          <div class="section-heading quiet">
+            <h2>Developer entry points</h2>
+            <p class="section-description">
+              Start from the interface that fits your team: bootstrap a homelab,
+              describe a model in Python, apply a Kubernetes manifest, or operate
+              active endpoints and cached model state from the CLI.
+            </p>
+          </div>
+          <div class="entry-grid">
+            <div class="entry-tabs" role="tablist" aria-label="InferOps entry point examples">
+              <button class="entry-tab active" type="button" role="tab" aria-selected="true" data-tab="homelab">
+                <span>01</span>
+                Bootstrap homelab
+              </button>
+              <button class="entry-tab" type="button" role="tab" aria-selected="false" data-tab="python">
+                <span>02</span>
+                Declare model in Python
+              </button>
+              <button class="entry-tab" type="button" role="tab" aria-selected="false" data-tab="yaml">
+                <span>03</span>
+                Apply Kubernetes spec
+              </button>
+              <button class="entry-tab" type="button" role="tab" aria-selected="false" data-tab="operate">
+                <span>04</span>
+                Operate active and cached models
+              </button>
+            </div>
+
+            <div class="code-panel">
+              <div class="code-toolbar">
+                <span id="snippet-title">Homelab install</span>
+                <span class="toolbar-dots" aria-hidden="true">
+                  <i></i><i></i><i></i>
+                </span>
+              </div>
+              <pre><code id="snippet-code"></code></pre>
+            </div>
+          </div>
+        </section>
+
+        <section class="provisioning" id="provisioning">
+          <div class="section-heading quiet wide">
+            <h2>Provisioning</h2>
+            <p class="section-description">
+              InferOps keeps runtime selection, cache preparation, activation,
+              routing, and observability inside the cluster so operators can see
+              what is running, waiting, draining, or ready for traffic.
+            </p>
+          </div>
+
+          <div class="runtime-strip" aria-label="Supported runtime examples">
+            <article class="runtime-card">
+              <span class="runtime-logo nano">nV</span>
+              <h3>nano-vLLM</h3>
+              <p>Default packaged runtime for OpenAI-compatible LLM serving.</p>
+            </article>
+            <article class="runtime-card">
+              <span class="runtime-logo vllm">vL</span>
+              <h3>vLLM</h3>
+              <p>GPU path for high-throughput deployments and larger models.</p>
+            </article>
+            <article class="runtime-card">
+              <span class="runtime-logo sg">SG</span>
+              <h3>SGLang</h3>
+              <p>Runtime contract support for specialized serving engines.</p>
+            </article>
+            <article class="runtime-card">
+              <span class="runtime-logo llama">ll</span>
+              <h3>llama.cpp</h3>
+              <p>Portable CPU path for local testing and small GGUF models.</p>
+            </article>
+          </div>
+
+          <div class="ops-grid">
+            <article class="observability-card">
+              <div>
+                <p class="mini-label">Observability</p>
+                <h3>Watch reconciliation become traffic.</h3>
+                <p>
+                  Status, Events, logs, cache state, GPU inventory, and gateway
+                  readiness stay inspectable from CLI, YAML, and dashboard views.
+                </p>
+              </div>
+              <div class="metric-visual" aria-hidden="true">
+                <div class="metric-row"><span></span><i style="--value: 76%"></i></div>
+                <div class="metric-row"><span></span><i style="--value: 48%"></i></div>
+                <div class="metric-row"><span></span><i style="--value: 88%"></i></div>
+                <svg viewBox="0 0 260 120" role="img">
+                  <polyline class="chart-glow" points="4,96 42,68 82,74 122,36 164,52 204,22 256,30" />
+                  <polyline points="4,96 42,68 82,74 122,36 164,52 204,22 256,30" />
+                </svg>
+              </div>
+            </article>
+
+            <article class="connection-card">
+              <div>
+                <p class="mini-label">Private connection</p>
+                <h3>Reach the gateway without public ingress.</h3>
+                <p>
+                  Pair InferOps with private network access such as Tailscale
+                  and keep runtime pods, cache, and credentials in your cluster.
+                </p>
+              </div>
+              <div class="map-visual" aria-hidden="true">
+                <svg viewBox="0 0 760 360">
+                  <path class="land north-america" d="M118 96l52-34 78 8 42 40-12 64-64 20-74-16-34-38z" />
+                  <path class="land europe" d="M420 90l50-18 42 26-8 44-50 24-46-30z" />
+                  <path class="land africa" d="M446 176l64 4 38 62-24 70-66-10-32-74z" />
+                  <path class="land asia" d="M514 96l86-26 88 28 36 62-58 44-112-18-44-44z" />
+                  <path class="land south-america" d="M236 210l42 28 10 72-38 44-36-54 2-58z" />
+                  <path class="route" d="M190 152 C 282 54, 380 42, 462 128" />
+                  <path class="route route-soft" d="M190 152 C 318 208, 476 212, 618 154" />
+                  <circle class="node us" cx="190" cy="152" r="9" />
+                  <circle class="node ireland" cx="462" cy="128" r="9" />
+                  <circle class="node remote" cx="618" cy="154" r="6" />
+                </svg>
+              </div>
+            </article>
+
+            <article class="cache-card">
+              <div>
+                <p class="mini-label">Model caching and autoscaling</p>
+                <h3>Release compute without throwing away model state.</h3>
+                <p>
+                  Activation acquires runtime capacity; deactivation drains and
+                  releases compute while node-local cache remains reusable.
+                </p>
+              </div>
+              <div class="cache-visual" aria-hidden="true">
+                <div class="request-path primary"><span></span></div>
+                <div class="request-path secondary"><span></span></div>
+                <div class="node-shell">
+                  <div class="runtime-stage">
+                    <span class="runtime-label">Runtime</span>
+                    <span class="drain-label">Draining</span>
+                    <span class="worker worker-one"></span>
+                    <span class="worker worker-two"></span>
+                    <span class="worker worker-three"></span>
+                  </div>
+                  <div class="cache-layer">
+                    <span>Model Cache</span>
+                    <div class="cache-cells">
+                      <i></i><i></i><i></i><i></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="network section-band" id="network">
+          <div class="network-copy">
+            <p class="eyebrow">Cloud</p>
+            <h2>Bring private inference capacity into a wider network.</h2>
+            <p>
+              Provision your own inference server for internal teams today, with
+              a path toward sharing approved capacity across regions, teams, or
+              future external workloads.
+            </p>
+            <a class="primary-button" href="#entrypoints">Get started</a>
+          </div>
+        </section>
+
+        <section class="articles" id="articles">
+          <div class="section-heading quiet">
+            <h2>Articles</h2>
+            <p class="section-description">Build notes for operators and model platform teams.</p>
+          </div>
+          <div class="article-grid">
+            <article class="article-card">
+              <div class="article-image image-one"></div>
+              <div class="article-body">
+                <p class="article-author">InferOps Engineering</p>
+                <h3>Designing activation without surprise evictions</h3>
+                <p>Why deployments default inactive and capacity decisions stay explicit.</p>
+                <a href="#">Read more</a>
+              </div>
+            </article>
+            <article class="article-card">
+              <div class="article-image image-two"></div>
+              <div class="article-body">
+                <p class="article-author">Runtime Notes</p>
+                <h3>Choosing nano-vLLM, vLLM, SGLang, or llama.cpp</h3>
+                <p>How runtime contracts keep engines swappable without hiding constraints.</p>
+                <a href="#">Read more</a>
+              </div>
+            </article>
+            <article class="article-card">
+              <div class="article-image image-three"></div>
+              <div class="article-body">
+                <p class="article-author">Homelab Guide</p>
+                <h3>Running a GPU inference server from your own rack</h3>
+                <p>Cache models locally, expose a gateway, and keep the cluster observable.</p>
+                <a href="#">Read more</a>
+              </div>
+            </article>
+          </div>
+        </section>
+      </main>
+
+      <footer class="footer">
+        <span>created by BrassinAi</span>
+      </footer>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
