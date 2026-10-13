@@ -1,0 +1,15 @@
+{
+  "name": "inferops-landing",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "build-docs": "node scripts/build-docs.mjs",
+    "build-docs:gh": "BASE_PATH=${BASE_PATH:-} npm run build-docs",
+    "dev": "npm run build-docs && npx serve -p 3000 ."
+  },
+  "devDependencies": {
+    "js-yaml": "^4.3.0",
+    "marked": "^18.1.0"
+  }
+}

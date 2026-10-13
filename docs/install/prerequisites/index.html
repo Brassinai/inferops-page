@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Prerequisites | InferOps Docs</title>
+    <meta name="description" content="Set up Kubernetes, container tooling, and storage before installing InferOps." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles.css" />
+    <link rel="stylesheet" href="/docs.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" />
+  </head>
+  <body>
+    <svg class="svg-filters" aria-hidden="true" focusable="false">
+      <filter id="sketch-map" x="-6%" y="-6%" width="112%" height="112%">
+        <feTurbulence
+          type="fractalNoise"
+          baseFrequency="0.012 0.038"
+          numOctaves="2"
+          seed="12"
+          result="paper-noise"
+        />
+        <feDisplacementMap
+          in="SourceGraphic"
+          in2="paper-noise"
+          scale="2.2"
+          xChannelSelector="R"
+          yChannelSelector="G"
+        />
+      </filter>
+    </svg>
+
+    <div class="site-shell">
+      <header class="topbar">
+        <a class="brand" href="/" aria-label="InferOps home">
+          <span class="brand-mark"></span>
+          inferops
+        </a>
+        <nav class="nav-links" aria-label="Primary navigation">
+          <a href="/#entrypoints">Entrypoints</a>
+          <a href="/#provisioning">Provisioning</a>
+          <a href="/#network">Network</a>
+          <a href="/#articles">Articles</a>
+          <a class="active" href="/docs/" aria-current="page">Docs</a>
+        </nav>
+        <a class="nav-cta" href="/#entrypoints">Get started</a>
+      </header>
+
+      <main>
+        <div class="docs-main">
+          <aside class="docs-sidebar">
+            <div class="docs-search-bar">
+              <button id="docs-search-trigger" type="button" aria-label="Open search">
+                <span class="docs-search-icon" aria-hidden="true">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+                </span>
+                <span class="docs-search-label">Search docs</span>
+                <span class="docs-search-shortcut"><kbd>⌘</kbd><kbd>K</kbd></span>
+              </button>
+            </div>
+            <nav aria-label="Documentation table of contents">
+              <ul class="docs-toc"><li><span class="docs-toc-group">Overview</span><ul><li><a class="" href="/docs/">Overview</a></li></ul></li><li><span class="docs-toc-group">Install</span><ul><li><a class="active" href="/docs/install/prerequisites/">Prerequisites</a></li><li><a class="" href="/docs/install/install-inferops/">Install InferOps</a></li></ul></li><li><span class="docs-toc-group">Getting Started</span><ul><li><a class="" href="/docs/getting-started/first-model/">Deploy your first model</a></li><li><a class="" href="/docs/getting-started/lifecycle/">Activate, call, and deactivate</a></li></ul></li><li><span class="docs-toc-group">Guides</span><ul><li><a class="" href="/docs/guides/operations/">Operations</a></li><li><a class="" href="/docs/guides/runtimes/">Runtimes</a></li><li><a class="" href="/docs/guides/routing/">Routing</a></li><li><a class="" href="/docs/guides/observability/">Observability</a></li><li><a class="" href="/docs/guides/gpu-scheduling/">GPU scheduling</a></li><li><a class="" href="/docs/guides/autoscaling/">Autoscaling</a></li></ul></li><li><span class="docs-toc-group">Platform</span><ul><li><a class="" href="/docs/platform/homelab/">Homelab setup</a></li><li><a class="" href="/docs/platform/production/">Production notes</a></li><li><a class="" href="/docs/platform/ingress/">Cluster ingress</a></li><li><a class="" href="/docs/platform/tenancy/">Namespace tenancy</a></li><li><a class="" href="/docs/platform/cloud-mesh/">Cloud mesh connect</a></li><li><a class="" href="/docs/platform/disaster-recovery/">Backup and disaster recovery</a></li></ul></li><li><span class="docs-toc-group">Reference</span><ul><li><a class="" href="/docs/reference/cli/">CLI reference</a></li><li><a class="" href="/docs/reference/sdk/">SDK reference</a></li><li><a class="" href="/docs/reference/crds/">CRD reference</a></li><li><a class="" href="/docs/reference/runtime-conformance/">Runtime conformance</a></li></ul></li></ul>
+            </nav>
+          </aside>
+
+          <article class="docs-content prose-docs">
+            <h1>Prerequisites</h1>
+<p>InferOps runs inside a Kubernetes cluster. Before you install it, you need a working cluster with <code>kubectl</code> and <code>helm</code>, a container runtime that can run your chosen inference engines, and a node-local path where model caches can be stored.</p>
+<h2>Quick checklist</h2>
+<ul>
+<li><input disabled="" type="checkbox"> A Kubernetes cluster (k3s, OrbStack, kind, minikube, or a managed cluster).</li>
+<li><input disabled="" type="checkbox"> <code>kubectl</code> configured to talk to the cluster.</li>
+<li><input disabled="" type="checkbox"> <code>helm</code> 3.15 or newer.</li>
+<li><input disabled="" type="checkbox"> A node-local cache directory such as <code>/var/lib/inferops/models</code>.</li>
+<li><input disabled="" type="checkbox"> For GPU runtimes: NVIDIA drivers, the NVIDIA Container Toolkit, and the NVIDIA Device Plugin.</li>
+<li><input disabled="" type="checkbox"> (Optional) A Tailscale tailnet if you want private remote access.</li>
+</ul>
+<h2>Choose a cluster</h2>
+<h3>k3s on a single GPU node</h3>
+<p><a href="https://k3s.io/">k3s</a> is the recommended starting point for a homelab.</p>
+<ol>
+<li><strong>Install k3s with the NVIDIA runtime</strong></li>
+</ol>
+<pre><code class="language-bash">curl -sfL https://get.k3s.io | sh -s - \
+  --kubeconfig-mode 644 \
+  --default-runtime nvidia
+</code></pre>
+<ol start="2">
+<li><strong>Install Helm</strong></li>
+</ol>
+<pre><code class="language-bash">curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+</code></pre>
+<ol start="3">
+<li><strong>Create the cache directory</strong></li>
+</ol>
+<p>Model caches use a <code>hostPath</code> directory. The downloader runs as UID <code>65532</code>,
+so create the directory with that ownership before installing InferOps.
+InferOps will not create a root-owned directory that the downloader cannot
+write.</p>
+<pre><code class="language-bash">sudo install -d -o 65532 -g 65532 -m 0750 /var/lib/inferops/models
+</code></pre>
+<ol start="4">
+<li><strong>Install the NVIDIA Container Toolkit</strong></li>
+</ol>
+<p>GPU runtimes such as <code>vllm</code> and <code>sglang</code> need the NVIDIA
+Container Toolkit configured for containerd.</p>
+<pre><code class="language-bash">sudo apt-get install -y nvidia-container-toolkit
+sudo nvidia-ctk runtime configure --runtime=containerd
+sudo systemctl restart k3s
+</code></pre>
+<ol start="5">
+<li><strong>Install the NVIDIA Device Plugin</strong></li>
+</ol>
+<pre><code class="language-bash">kubectl apply -f https://raw.githubusercontent.com/NVIDIA/k8s-device-plugin/v0.17.0/nvidia-device-plugin.yml
+</code></pre>
+<ol start="6">
+<li><strong>Verify the GPU is allocatable</strong></li>
+</ol>
+<p>Get the node name first:</p>
+<pre><code class="language-bash">kubectl get nodes -o name
+</code></pre>
+<p>Example output:</p>
+<pre><code class="language-text">node/gpu-node-1
+</code></pre>
+<p>Then check the GPU resource:</p>
+<pre><code class="language-bash">NODE=$(kubectl get nodes -o jsonpath=&#39;{.items[0].metadata.name}&#39;)
+kubectl describe node &quot;$NODE&quot; | grep nvidia.com/gpu
+</code></pre>
+<p>Expected output:</p>
+<pre><code class="language-text">nvidia.com/gpu: 1
+</code></pre>
+<p>For a detailed walkthrough, see the <a href="/docs/platform/homelab/">Homelab setup</a> guide.</p>
+<h3>OrbStack (macOS local cluster)</h3>
+<p><a href="https://orbstack.dev/">OrbStack</a> provides a lightweight local Kubernetes cluster for CPU-only smoke tests. macOS does not expose NVIDIA GPUs to the cluster, so use the <code>llama-cpp</code> runtime here.</p>
+<ol>
+<li><strong>Start the cluster</strong></li>
+</ol>
+<pre><code class="language-bash">orb start k8s
+kubectl config use-context orbstack
+</code></pre>
+<ol start="2">
+<li><strong>Install Helm</strong></li>
+</ol>
+<pre><code class="language-bash">curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+</code></pre>
+<ol start="3">
+<li><strong>Create the cache directory</strong></li>
+</ol>
+<p>Model caches use a <code>hostPath</code> directory. The downloader runs as UID <code>65532</code>,
+so create the directory with that ownership before installing InferOps.
+InferOps will not create a root-owned directory that the downloader cannot
+write.</p>
+<pre><code class="language-bash">orb sudo install -d -o 65532 -g 65532 -m 0750 /var/lib/inferops/models
+</code></pre>
+<p>If that fails, create it from inside the OrbStack node:</p>
+<pre><code class="language-bash">orb sh
+sudo install -d -o 65532 -g 65532 -m 0750 /var/lib/inferops/models
+exit
+</code></pre>
+<ol start="4">
+<li><strong>Install InferOps</strong></li>
+</ol>
+<pre><code class="language-bash">inferops install \
+  --context orbstack \
+  --profile homelab \
+  --cache-path /var/lib/inferops/models \
+  --cache-capacity 2Gi
+</code></pre>
+<h3>Other one-node Kubernetes options</h3>
+<p>You can also use <strong>kind</strong>, <strong>minikube</strong>, or a small <strong>managed cluster</strong>. The requirements are the same: a working Kubernetes API, <code>kubectl</code>, <code>helm</code>, and a writable node-local path for the cache. GPU passthrough depends on the tool you choose.</p>
+<h2>Install kubectl and helm</h2>
+<p>If you prefer a package manager:</p>
+<pre><code class="language-bash"># macOS
+brew install kubectl helm
+
+# Ubuntu/Debian
+sudo apt-get install -y kubectl helm
+</code></pre>
+<p>Verify:</p>
+<pre><code class="language-bash">kubectl version --client
+helm version
+</code></pre>
+<h2>(Optional) Tailscale private access</h2>
+<p>If you want to reach the gateway from outside your local network without public ingress, install the <a href="https://tailscale.com/docs/kubernetes-operator">Tailscale Kubernetes Operator</a> in your cluster. InferOps can then expose the gateway through a Tailscale Ingress.</p>
+<h2>Next step</h2>
+<p>Once the cluster and storage are ready, <a href="/docs/install/install-inferops/">install InferOps</a>.</p>
+
+
+            <nav class="docs-pagination" aria-label="Documentation pagination">
+              <a class="docs-pagination-link docs-pagination-link--prev" href="/docs/"><span class="docs-pagination-label">&larr; Previous</span><span class="docs-pagination-title">Overview</span></a>
+              <a class="docs-pagination-link docs-pagination-link--next" href="/docs/install/install-inferops/"><span class="docs-pagination-label">&rarr; Next</span><span class="docs-pagination-title">Install InferOps</span></a>
+            </nav>
+          </article>
+        </div>
+      </main>
+
+      <footer class="footer">
+        <span>created by BrassinAi</span>
+      </footer>
+    </div>
+
+    <div id="docs-kbar" class="docs-kbar" role="dialog" aria-modal="true" aria-label="Search documentation" hidden>
+      <div class="docs-kbar-overlay" data-kbar-close></div>
+      <div class="docs-kbar-modal">
+        <div class="docs-kbar-input-wrap">
+          <input id="docs-kbar-input" type="text" placeholder="Search pages…" autocomplete="off" aria-label="Search pages" />
+        </div>
+        <ul id="docs-kbar-results" class="docs-kbar-results" role="listbox"></ul>
+        <div class="docs-kbar-footer">
+          <span><kbd>↑</kbd><kbd>↓</kbd> navigate</span>
+          <span><kbd>↵</kbd> select</span>
+          <span><kbd>esc</kbd> close</span>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      window.__DOCS_INDEX = [{"title":"Overview","path":"/docs/","group":"Overview","description":"What InferOps is, why it exists, and how the pieces fit together."},{"title":"Prerequisites","path":"/docs/install/prerequisites/","group":"Install","description":"Set up Kubernetes, container tooling, and storage before installing InferOps."},{"title":"Install InferOps","path":"/docs/install/install-inferops/","group":"Install","description":"Install the InferOps CLI, CRDs, operator, gateway, and packaged runtimes."},{"title":"Deploy your first model","path":"/docs/getting-started/first-model/","group":"Getting Started","description":"Declare a model with the Python SDK or YAML and let InferOps reconcile it."},{"title":"Activate, call, and deactivate","path":"/docs/getting-started/lifecycle/","group":"Getting Started","description":"Start the runtime, send an OpenAI-compatible request, and release compute while keeping the cache."},{"title":"Operations","path":"/docs/guides/operations/","group":"Guides","description":"Activate, deactivate, inspect, and troubleshoot InferOps models."},{"title":"Runtimes","path":"/docs/guides/runtimes/","group":"Guides","description":"Choose and configure an InferOps ModelRuntime for your inference engine."},{"title":"Routing","path":"/docs/guides/routing/","group":"Guides","description":"How the InferOps gateway routes requests and handles model lifecycle states."},{"title":"Observability","path":"/docs/guides/observability/","group":"Guides","description":"Monitor InferOps with Prometheus and Grafana."},{"title":"GPU scheduling","path":"/docs/guides/gpu-scheduling/","group":"Guides","description":"How InferOps reserves whole GPUs and handles cache locality."},{"title":"Autoscaling","path":"/docs/guides/autoscaling/","group":"Guides","description":"How InferOps scales runtimes based on pending requests and idle timeouts."},{"title":"Homelab setup","path":"/docs/platform/homelab/","group":"Platform","description":"Set up single-node k3s with an NVIDIA GPU for InferOps."},{"title":"Production notes","path":"/docs/platform/production/","group":"Platform","description":"Run InferOps in production with RBAC, monitoring, upgrades, and disaster recovery."},{"title":"Cluster ingress","path":"/docs/platform/ingress/","group":"Platform","description":"Expose the InferOps gateway with Ingress, Gateway API, LoadBalancer, or Tailscale."},{"title":"Namespace tenancy","path":"/docs/platform/tenancy/","group":"Platform","description":"Share InferOps across teams using namespaces, RBAC, and NetworkPolicy."},{"title":"Cloud mesh connect","path":"/docs/platform/cloud-mesh/","group":"Platform","description":"Connect a self-hosted InferOps cluster to InferCloud."},{"title":"Backup and disaster recovery","path":"/docs/platform/disaster-recovery/","group":"Platform","description":"Back up and restore InferOps custom resources and model caches."},{"title":"CLI reference","path":"/docs/reference/cli/","group":"Reference","description":"Common InferOps CLI commands for installing, deploying, and operating models."},{"title":"SDK reference","path":"/docs/reference/sdk/","group":"Reference","description":"Declare models and custom endpoints with the InferOps Python SDK."},{"title":"CRD reference","path":"/docs/reference/crds/","group":"Reference","description":"Field reference for ModelDeployment, ModelRuntime, and ModelCache."},{"title":"Runtime conformance","path":"/docs/reference/runtime-conformance/","group":"Reference","description":"The contract every InferOps runtime adapter must satisfy."}];
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-yaml.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+    <script src="/docs.js"></script>
+  </body>
+</html>

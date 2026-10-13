@@ -1,0 +1,103 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" preserveAspectRatio="xMidYMid meet" aria-label="Abstract InferOps stack">
+  <defs>
+    <filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <filter id="softShadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#000" flood-opacity="0.55"/>
+    </filter>
+
+    <radialGradient id="coreGrad" cx="35%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#78c8ff" stop-opacity="0.55"/>
+      <stop offset="55%" stop-color="#78c8ff" stop-opacity="0.22"/>
+      <stop offset="100%" stop-color="#78c8ff" stop-opacity="0"/>
+    </radialGradient>
+
+    <radialGradient id="sphereGrad" cx="30%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#d8c7ff" stop-opacity="0.45"/>
+      <stop offset="55%" stop-color="#d8c7ff" stop-opacity="0.14"/>
+      <stop offset="100%" stop-color="#d8c7ff" stop-opacity="0"/>
+    </radialGradient>
+
+    <linearGradient id="cardGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f5f4ee" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#f5f4ee" stop-opacity="0.04"/>
+    </linearGradient>
+
+    <linearGradient id="cubeTop" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#78c8ff" stop-opacity="0.32"/>
+      <stop offset="100%" stop-color="#78c8ff" stop-opacity="0.10"/>
+    </linearGradient>
+
+    <linearGradient id="cubeLeft" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#78c8ff" stop-opacity="0.22"/>
+      <stop offset="100%" stop-color="#78c8ff" stop-opacity="0.06"/>
+    </linearGradient>
+
+    <linearGradient id="cubeRight" x1="100%" y1="0%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#78c8ff" stop-opacity="0.28"/>
+      <stop offset="100%" stop-color="#78c8ff" stop-opacity="0.08"/>
+    </linearGradient>
+
+    <linearGradient id="cylinderBody" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffc857" stop-opacity="0.24"/>
+      <stop offset="50%" stop-color="#ffc857" stop-opacity="0.10"/>
+      <stop offset="100%" stop-color="#ffc857" stop-opacity="0.20"/>
+    </linearGradient>
+  </defs>
+
+  <!-- connection threads -->
+  <g stroke="rgba(245,244,238,0.22)" stroke-width="1.5" fill="none" stroke-linecap="round">
+    <path d="M400 160 L400 208"/>
+    <path d="M442 250 L584 250"/>
+    <path d="M358 250 L222 250"/>
+    <path d="M400 292 L400 364"/>
+    <path d="M456 110 L630 110"/>
+  </g>
+
+  <!-- active pulse dots on threads -->
+  <g fill="#ff6a3d" filter="url(#glow)">
+    <circle cx="400" cy="184" r="4.5"/>
+    <circle cx="513" cy="250" r="4.5"/>
+    <circle cx="290" cy="250" r="4.5"/>
+    <circle cx="400" cy="328" r="4.5"/>
+  </g>
+
+  <!-- private mesh sphere (back) -->
+  <circle cx="680" cy="110" r="48" fill="url(#sphereGrad)" stroke="#d8c7ff" stroke-width="1.5" stroke-opacity="0.55" filter="url(#glow)"/>
+
+  <!-- gateway ring -->
+  <circle cx="400" cy="110" r="54" fill="none" stroke="#78c8ff" stroke-width="2" stroke-opacity="0.45" filter="url(#glow)"/>
+  <circle cx="400" cy="110" r="40" fill="none" stroke="#78c8ff" stroke-width="5" stroke-opacity="0.95" filter="url(#glow)"/>
+
+  <!-- central core -->
+  <circle cx="400" cy="250" r="44" fill="url(#coreGrad)" stroke="#78c8ff" stroke-width="2.5" filter="url(#glow)"/>
+  <circle cx="400" cy="250" r="18" fill="#060706" stroke="#78c8ff" stroke-width="2" stroke-opacity="0.95"/>
+
+  <!-- deployment card -->
+  <g filter="url(#softShadow)">
+    <rect x="120" y="210" width="100" height="80" rx="14" fill="url(#cardGrad)" stroke="#f5f4ee" stroke-width="1.5" stroke-opacity="0.45"/>
+  </g>
+  <line x1="142" y1="240" x2="198" y2="240" stroke="#f5f4ee" stroke-width="2.5" stroke-opacity="0.45" stroke-linecap="round"/>
+  <line x1="142" y1="258" x2="178" y2="258" stroke="#f5f4ee" stroke-width="2.5" stroke-opacity="0.30" stroke-linecap="round"/>
+  <line x1="142" y1="274" x2="188" y2="274" stroke="#f5f4ee" stroke-width="2.5" stroke-opacity="0.30" stroke-linecap="round"/>
+
+  <!-- runtime cube -->
+  <g transform="translate(584, 210)" filter="url(#softShadow)">
+    <path d="M40 0 L80 24 L40 48 L0 24 Z" fill="url(#cubeTop)" stroke="#78c8ff" stroke-width="1.5" stroke-opacity="0.85"/>
+    <path d="M0 24 L40 48 L40 96 L0 72 Z" fill="url(#cubeLeft)" stroke="#78c8ff" stroke-width="1.5" stroke-opacity="0.60"/>
+    <path d="M40 48 L80 24 L80 72 L40 96 Z" fill="url(#cubeRight)" stroke="#78c8ff" stroke-width="1.5" stroke-opacity="0.75"/>
+  </g>
+
+  <!-- cache cylinder -->
+  <g transform="translate(360, 380)" filter="url(#softShadow)">
+    <ellipse cx="40" cy="0" rx="40" ry="12" fill="#ffc857" fill-opacity="0.16" stroke="#ffc857" stroke-width="1.5" stroke-opacity="0.65"/>
+    <rect x="0" y="0" width="80" height="52" fill="url(#cylinderBody)" stroke="#ffc857" stroke-width="1.5" stroke-opacity="0.50"/>
+    <ellipse cx="40" cy="52" rx="40" ry="12" fill="#ffc857" fill-opacity="0.10" stroke="#ffc857" stroke-width="1.5" stroke-opacity="0.65"/>
+  </g>
+</svg>

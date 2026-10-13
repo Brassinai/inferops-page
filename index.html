@@ -46,6 +46,7 @@
           <a href="#provisioning">Provisioning</a>
           <a href="#network">Network</a>
           <a href="#articles">Articles</a>
+          <a href="docs/">Docs</a>
         </nav>
         <a class="nav-cta" href="#entrypoints">Get started</a>
       </header>
@@ -127,19 +128,14 @@
 
           <div class="runtime-strip" aria-label="Supported runtime examples">
             <article class="runtime-card">
-              <span class="runtime-logo nano">nV</span>
-              <h3>nano-vLLM</h3>
-              <p>Default packaged runtime for OpenAI-compatible LLM serving.</p>
-            </article>
-            <article class="runtime-card">
               <span class="runtime-logo vllm">vL</span>
               <h3>vLLM</h3>
-              <p>GPU path for high-throughput deployments and larger models.</p>
+              <p>Default packaged runtime for OpenAI-compatible LLM serving.</p>
             </article>
             <article class="runtime-card">
               <span class="runtime-logo sg">SG</span>
               <h3>SGLang</h3>
-              <p>Runtime contract support for specialized serving engines.</p>
+              <p>Specialized serving engine; readiness uses <code>/health_generate</code>.</p>
             </article>
             <article class="runtime-card">
               <span class="runtime-logo llama">ll</span>
@@ -258,7 +254,7 @@
               <div class="article-image image-two"></div>
               <div class="article-body">
                 <p class="article-author">Runtime Notes</p>
-                <h3>Choosing nano-vLLM, vLLM, SGLang, or llama.cpp</h3>
+                <h3>Choosing vLLM, SGLang, or llama.cpp</h3>
                 <p>How runtime contracts keep engines swappable without hiding constraints.</p>
                 <a href="#">Read more</a>
               </div>

@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Production notes | InferOps Docs</title>
+    <meta name="description" content="Run InferOps in production with RBAC, monitoring, upgrades, and disaster recovery." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles.css" />
+    <link rel="stylesheet" href="/docs.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" />
+  </head>
+  <body>
+    <svg class="svg-filters" aria-hidden="true" focusable="false">
+      <filter id="sketch-map" x="-6%" y="-6%" width="112%" height="112%">
+        <feTurbulence
+          type="fractalNoise"
+          baseFrequency="0.012 0.038"
+          numOctaves="2"
+          seed="12"
+          result="paper-noise"
+        />
+        <feDisplacementMap
+          in="SourceGraphic"
+          in2="paper-noise"
+          scale="2.2"
+          xChannelSelector="R"
+          yChannelSelector="G"
+        />
+      </filter>
+    </svg>
+
+    <div class="site-shell">
+      <header class="topbar">
+        <a class="brand" href="/" aria-label="InferOps home">
+          <span class="brand-mark"></span>
+          inferops
+        </a>
+        <nav class="nav-links" aria-label="Primary navigation">
+          <a href="/#entrypoints">Entrypoints</a>
+          <a href="/#provisioning">Provisioning</a>
+          <a href="/#network">Network</a>
+          <a href="/#articles">Articles</a>
+          <a class="active" href="/docs/" aria-current="page">Docs</a>
+        </nav>
+        <a class="nav-cta" href="/#entrypoints">Get started</a>
+      </header>
+
+      <main>
+        <div class="docs-main">
+          <aside class="docs-sidebar">
+            <div class="docs-search-bar">
+              <button id="docs-search-trigger" type="button" aria-label="Open search">
+                <span class="docs-search-icon" aria-hidden="true">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+                </span>
+                <span class="docs-search-label">Search docs</span>
+                <span class="docs-search-shortcut"><kbd>⌘</kbd><kbd>K</kbd></span>
+              </button>
+            </div>
+            <nav aria-label="Documentation table of contents">
+              <ul class="docs-toc"><li><span class="docs-toc-group">Overview</span><ul><li><a class="" href="/docs/">Overview</a></li></ul></li><li><span class="docs-toc-group">Install</span><ul><li><a class="" href="/docs/install/prerequisites/">Prerequisites</a></li><li><a class="" href="/docs/install/install-inferops/">Install InferOps</a></li></ul></li><li><span class="docs-toc-group">Getting Started</span><ul><li><a class="" href="/docs/getting-started/first-model/">Deploy your first model</a></li><li><a class="" href="/docs/getting-started/lifecycle/">Activate, call, and deactivate</a></li></ul></li><li><span class="docs-toc-group">Guides</span><ul><li><a class="" href="/docs/guides/operations/">Operations</a></li><li><a class="" href="/docs/guides/runtimes/">Runtimes</a></li><li><a class="" href="/docs/guides/routing/">Routing</a></li><li><a class="" href="/docs/guides/observability/">Observability</a></li><li><a class="" href="/docs/guides/gpu-scheduling/">GPU scheduling</a></li><li><a class="" href="/docs/guides/autoscaling/">Autoscaling</a></li></ul></li><li><span class="docs-toc-group">Platform</span><ul><li><a class="" href="/docs/platform/homelab/">Homelab setup</a></li><li><a class="active" href="/docs/platform/production/">Production notes</a></li><li><a class="" href="/docs/platform/ingress/">Cluster ingress</a></li><li><a class="" href="/docs/platform/tenancy/">Namespace tenancy</a></li><li><a class="" href="/docs/platform/cloud-mesh/">Cloud mesh connect</a></li><li><a class="" href="/docs/platform/disaster-recovery/">Backup and disaster recovery</a></li></ul></li><li><span class="docs-toc-group">Reference</span><ul><li><a class="" href="/docs/reference/cli/">CLI reference</a></li><li><a class="" href="/docs/reference/sdk/">SDK reference</a></li><li><a class="" href="/docs/reference/crds/">CRD reference</a></li><li><a class="" href="/docs/reference/runtime-conformance/">Runtime conformance</a></li></ul></li></ul>
+            </nav>
+          </aside>
+
+          <article class="docs-content prose-docs">
+            <h1>Production notes</h1>
+<h2>Cluster requirements</h2>
+<ul>
+<li>Kubernetes 1.28+</li>
+<li>NVIDIA device plugin for GPU workloads</li>
+<li>Container runtime with NVIDIA support for GPU workloads</li>
+<li><code>local</code> or <code>hostPath</code> storage for node-local cache, or a fast shared filesystem</li>
+</ul>
+<h2>Capacity assumptions</h2>
+<ul>
+<li>GPU workloads: equal requests and limits for <code>nvidia.com/gpu</code>.</li>
+<li>CPU-only: explicit <code>cpu</code> and <code>memory</code> requests/limits.</li>
+<li>Cache: size to the largest model and plan 2x model size for extraction workspace.</li>
+</ul>
+<h2>RBAC</h2>
+<p>The operator needs:</p>
+<ul>
+<li>Read <code>ModelDeployment</code> and write its status.</li>
+<li>Read <code>ModelRuntime</code> and write its status.</li>
+<li>Create/read/update <code>ModelCache</code> and write its status.</li>
+<li>Create/read/update/delete <code>Deployment</code>, <code>Service</code>, <code>ConfigMap</code>, <code>Job</code>, and <code>PodDisruptionBudget</code>.</li>
+<li>Get referenced Secrets only.</li>
+<li>Read Nodes for scheduling.</li>
+<li>Emit Events.</li>
+</ul>
+<p>The gateway only needs read access to <code>ModelDeployment</code> and <code>Service</code>; it receives its auth Secret through a projected volume.</p>
+<h2>Network</h2>
+<ul>
+<li>The gateway exposes the OpenAI-compatible endpoint.</li>
+<li>Helm charts enable NetworkPolicies by default.</li>
+<li>Use Tailscale or an ingress controller for external access; never expose runtime pods directly.</li>
+<li>Set the exact Kubernetes API Service IP and narrow gateway ingress peers as described in <a href="/docs/platform/tenancy/">Namespace tenancy</a>.</li>
+</ul>
+<h2>Monitoring</h2>
+<p>Enable Prometheus Operator integration:</p>
+<pre><code class="language-bash">helm upgrade --install inferops-operator deploy/helm/inferops-operator \
+  --set serviceMonitor.enabled=true \
+  --set dashboards.enabled=true
+
+helm upgrade --install inferops-gateway deploy/helm/inferops-gateway \
+  --set serviceMonitor.enabled=true
+</code></pre>
+<p>Key metrics include deployment phase, GPU slots, activation queue depth, cache download duration, gateway request latency, and runtime-native signals such as TTFT and token throughput.</p>
+<h2>Upgrades</h2>
+<ol>
+<li>Back up custom resources and referenced Secrets.</li>
+<li>Run <code>make verify</code> and server-side dry-run the new CRDs.</li>
+<li>Apply CRDs before upgrading the operator; Helm does not upgrade files from <code>crds/</code>.</li>
+<li>Helm upgrade the operator and gateway independently with <code>--atomic --wait</code>.</li>
+<li>Re-activate models explicitly after image changes.</li>
+</ol>
+<h2>Known limitations</h2>
+<ul>
+<li>GPU slicing is not supported.</li>
+<li>No hosted InferOps control plane; all components run in-cluster.</li>
+<li>Single-GPU replacement has unavoidable downtime.</li>
+<li>Advanced rollouts require spare compatible GPU capacity.</li>
+<li>The self-hosted dashboard is read-only.</li>
+</ul>
+<h2>Next steps</h2>
+<ul>
+<li><a href="/docs/platform/disaster-recovery/">Backup and disaster recovery</a></li>
+<li><a href="/docs/platform/tenancy/">Namespace tenancy</a></li>
+</ul>
+
+
+            <nav class="docs-pagination" aria-label="Documentation pagination">
+              <a class="docs-pagination-link docs-pagination-link--prev" href="/docs/platform/homelab/"><span class="docs-pagination-label">&larr; Previous</span><span class="docs-pagination-title">Homelab setup</span></a>
+              <a class="docs-pagination-link docs-pagination-link--next" href="/docs/platform/ingress/"><span class="docs-pagination-label">&rarr; Next</span><span class="docs-pagination-title">Cluster ingress</span></a>
+            </nav>
+          </article>
+        </div>
+      </main>
+
+      <footer class="footer">
+        <span>created by BrassinAi</span>
+      </footer>
+    </div>
+
+    <div id="docs-kbar" class="docs-kbar" role="dialog" aria-modal="true" aria-label="Search documentation" hidden>
+      <div class="docs-kbar-overlay" data-kbar-close></div>
+      <div class="docs-kbar-modal">
+        <div class="docs-kbar-input-wrap">
+          <input id="docs-kbar-input" type="text" placeholder="Search pages…" autocomplete="off" aria-label="Search pages" />
+        </div>
+        <ul id="docs-kbar-results" class="docs-kbar-results" role="listbox"></ul>
+        <div class="docs-kbar-footer">
+          <span><kbd>↑</kbd><kbd>↓</kbd> navigate</span>
+          <span><kbd>↵</kbd> select</span>
+          <span><kbd>esc</kbd> close</span>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      window.__DOCS_INDEX = [{"title":"Overview","path":"/docs/","group":"Overview","description":"What InferOps is, why it exists, and how the pieces fit together."},{"title":"Prerequisites","path":"/docs/install/prerequisites/","group":"Install","description":"Set up Kubernetes, container tooling, and storage before installing InferOps."},{"title":"Install InferOps","path":"/docs/install/install-inferops/","group":"Install","description":"Install the InferOps CLI, CRDs, operator, gateway, and packaged runtimes."},{"title":"Deploy your first model","path":"/docs/getting-started/first-model/","group":"Getting Started","description":"Declare a model with the Python SDK or YAML and let InferOps reconcile it."},{"title":"Activate, call, and deactivate","path":"/docs/getting-started/lifecycle/","group":"Getting Started","description":"Start the runtime, send an OpenAI-compatible request, and release compute while keeping the cache."},{"title":"Operations","path":"/docs/guides/operations/","group":"Guides","description":"Activate, deactivate, inspect, and troubleshoot InferOps models."},{"title":"Runtimes","path":"/docs/guides/runtimes/","group":"Guides","description":"Choose and configure an InferOps ModelRuntime for your inference engine."},{"title":"Routing","path":"/docs/guides/routing/","group":"Guides","description":"How the InferOps gateway routes requests and handles model lifecycle states."},{"title":"Observability","path":"/docs/guides/observability/","group":"Guides","description":"Monitor InferOps with Prometheus and Grafana."},{"title":"GPU scheduling","path":"/docs/guides/gpu-scheduling/","group":"Guides","description":"How InferOps reserves whole GPUs and handles cache locality."},{"title":"Autoscaling","path":"/docs/guides/autoscaling/","group":"Guides","description":"How InferOps scales runtimes based on pending requests and idle timeouts."},{"title":"Homelab setup","path":"/docs/platform/homelab/","group":"Platform","description":"Set up single-node k3s with an NVIDIA GPU for InferOps."},{"title":"Production notes","path":"/docs/platform/production/","group":"Platform","description":"Run InferOps in production with RBAC, monitoring, upgrades, and disaster recovery."},{"title":"Cluster ingress","path":"/docs/platform/ingress/","group":"Platform","description":"Expose the InferOps gateway with Ingress, Gateway API, LoadBalancer, or Tailscale."},{"title":"Namespace tenancy","path":"/docs/platform/tenancy/","group":"Platform","description":"Share InferOps across teams using namespaces, RBAC, and NetworkPolicy."},{"title":"Cloud mesh connect","path":"/docs/platform/cloud-mesh/","group":"Platform","description":"Connect a self-hosted InferOps cluster to InferCloud."},{"title":"Backup and disaster recovery","path":"/docs/platform/disaster-recovery/","group":"Platform","description":"Back up and restore InferOps custom resources and model caches."},{"title":"CLI reference","path":"/docs/reference/cli/","group":"Reference","description":"Common InferOps CLI commands for installing, deploying, and operating models."},{"title":"SDK reference","path":"/docs/reference/sdk/","group":"Reference","description":"Declare models and custom endpoints with the InferOps Python SDK."},{"title":"CRD reference","path":"/docs/reference/crds/","group":"Reference","description":"Field reference for ModelDeployment, ModelRuntime, and ModelCache."},{"title":"Runtime conformance","path":"/docs/reference/runtime-conformance/","group":"Reference","description":"The contract every InferOps runtime adapter must satisfy."}];
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-yaml.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+    <script src="/docs.js"></script>
+  </body>
+</html>
